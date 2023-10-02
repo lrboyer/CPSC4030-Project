@@ -1,0 +1,62 @@
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Use min-height instead of height */
+    margin: 0;
+    flex-direction: column;
+    width: 100%;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background-color: rgb(230, 192, 241);
+}
+
+h1 {
+    font-size: 50px;
+}
+
+.title {    
+    background-color: #F56600;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+    flex-direction: column;
+    order: -1;
+}
+
+.visual {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center; 
+    grid-gap: 100px; 
+    order: 1;
+    padding: 30px;
+}
+
+.visual > div {
+    text-align: center; 
+}
+
+#interactive {
+    display: flex;
+    flex-direction: row;
+    flex-direction: column;
+    justify-content: center; 
+    padding: 30px;
+}
+
+#double {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; 
+    gap: 50px;
+    padding: 30px;
+}
