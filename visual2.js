@@ -1,6 +1,6 @@
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
-    console.log(dataset)
+    //console.log(dataset)
 
     var dimensions = {
         width: 700,
