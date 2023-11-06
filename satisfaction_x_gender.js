@@ -48,7 +48,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .padding(0.1);
 
     var yScale = d3.scaleLinear()
-        .domain([0, 100])
+        .domain([0, 50])
         .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top]);
 
     var customColors = ["Magenta", "Green", "Blue", "Black"];
@@ -96,7 +96,8 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .attr("x", -(dimensions.height / 2))
         .attr("y", 10)
         .attr("transform", "rotate(-90)")
-        .text("Percentage");
+        .attr("dy", ".5em") // Adjust vertical padding (move text up)
+        .text("Percentage of Gender");
 
 
     // Add legend
