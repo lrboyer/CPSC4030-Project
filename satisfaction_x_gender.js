@@ -1,12 +1,11 @@
-//Made by: Lucas Boyer
-//shopping satisfaction x gender (percentage)
+// Made by: Lucas Boyer
+// Shopping satisfaction x gender (percentage)
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
-    console.log(dataset)
 
     var dimensions = {
-        width: 700,
-        height: 500,
+        width: 900,
+        height: 600,
         margin: {
             top: 20,
             bottom: 60,
@@ -17,11 +16,12 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
     var svg = d3.select("#visual1")
         .style("width", dimensions.width)
-        .style("height", dimensions.height)
+        .style("height", dimensions.height);
+
+    svg.style("background-color", "white");
 
     var genderCounts = d3.rollup(dataset, v => v.length, d => d.Gender);
 
-    // Compute the total count of each gender for each shopping satisfaction level
     var genderSatisfactionCounts = d3.rollup(dataset, v => {
         var counts = d3.range(1, 6).map(satisfaction => {
             return {
@@ -32,7 +32,6 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         return counts;
     }, d => d.Gender);
 
-    // Calculate the percentage for each satisfaction level for each gender
     var genderSatisfactionPercentages = new Map();
 
     genderSatisfactionCounts.forEach((satisfactions, gender) => {
@@ -44,38 +43,32 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     });
 
     var xScale = d3.scaleBand()
-        .domain(d3.range(1, 6).map(String)) // Shopping satisfaction levels 1-5 as strings
+        .domain(d3.range(1, 6).map(String))
         .range([dimensions.margin.left, dimensions.width - dimensions.margin.right])
         .padding(0.1);
 
     var yScale = d3.scaleLinear()
-        .domain([0, d3.max(Array.from(genderSatisfactionPercentages.values()).flatMap(d => d.map(s => s.percentage)))])
+        .domain([0, 100])
         .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top]);
+
+    var customColors = ["Magenta", "Green", "Blue", "Black"];
 
     var color = d3.scaleOrdinal()
         .domain(genderSatisfactionCounts.keys())
-        .range(d3.schemeCategory10);
+        .range(customColors);
 
-    var stackedData = d3.stack()
-        .keys(genderSatisfactionCounts.keys())
-        .value((d, key) => d.percentage)
-        (Array.from(genderSatisfactionPercentages.values()));
+    var line = d3.line()
+        .x(d => xScale(String(d.satisfaction)) + xScale.bandwidth() / 2)
+        .y(d => yScale(d.percentage));
 
-    var bars = svg.selectAll(".bar-group")
-        .data(stackedData)
+    var genderLines = svg.selectAll(".gender-line")
+        .data(Array.from(genderSatisfactionPercentages.values()))
         .enter()
-        .append("g")
-        .attr("class", "bar-group")
-        .attr("fill", d => color(d.key));
-
-    bars.selectAll("rect")
-        .data(d => d)
-        .enter()
-        .append("rect")
-        .attr("x", d => xScale(String(d.data.satisfaction)))
-        .attr("y", d => yScale(d[1]))
-        .attr("width", xScale.bandwidth())
-        .attr("height", d => yScale(d[0]) - yScale(d[1]));
+        .append("path")
+        .attr("class", "gender-line")
+        .attr("d", d => line(d))
+        .style("stroke", (d, i) => color(Array.from(genderSatisfactionPercentages.keys())[i]))
+        .style("fill", "none");
 
     // Add x-axis
     svg.append("g")
@@ -83,11 +76,28 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .attr("transform", `translate(0,${dimensions.height - dimensions.margin.bottom})`)
         .call(d3.axisBottom(xScale));
 
+    svg.append("text")
+        .attr("class", "x-label")
+        .attr("text-anchor", "middle")
+        .attr("x", dimensions.width / 2)
+        .attr("y", dimensions.height - 10)
+        .text("Shopping Satisfaction Levels");
+
+
     // Add y-axis
     svg.append("g")
         .attr("class", "y-axis")
         .attr("transform", `translate(${dimensions.margin.left},0)`)
         .call(d3.axisLeft(yScale).tickFormat(d => `${d}%`));
+
+    svg.append("text")
+        .attr("class", "y-label")
+        .attr("text-anchor", "middle")
+        .attr("x", -(dimensions.height / 2))
+        .attr("y", 10)
+        .attr("transform", "rotate(-90)")
+        .text("Percentage");
+
 
     // Add legend
     var legend = svg.selectAll(".legend")
@@ -109,4 +119,5 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .attr("dy", ".35em")
         .style("text-anchor", "end")
         .text(d => d);
+
 });
