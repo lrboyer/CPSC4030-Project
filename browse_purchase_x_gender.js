@@ -23,46 +23,46 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
     var genderCounts = d3.rollup(dataset, v => v.length, d => d.Gender);
 
-    let browsingOrdinal= d3.scaleOrdinal()
-    .domain(['Rarely', 'Few times a month', 'Few times a week', 'Multiple times a day'])
-    .range([1,2,3,4]);
+    let browsingOrdinal = d3.scaleOrdinal()
+        .domain(['Rarely', 'Few times a month', 'Few times a week', 'Multiple times a day'])
+        .range([1, 2, 3, 4]);
 
-    var genderBrowsingCounts = d3.rollup(dataset, v =>{
-        var counts = d3.range(1,5).map(browsing =>{
-            return{
+    var genderBrowsingCounts = d3.rollup(dataset, v => {
+        var counts = d3.range(1, 5).map(browsing => {
+            return {
                 browsing: browsing,
-                count: d3.sum(v,d => +browsingOrdinal(d.Browsing_Frequency) === browsing ? 1:0)
+                count: d3.sum(v, d => +browsingOrdinal(d.Browsing_Frequency) === browsing ? 1 : 0)
             };
         });
         return counts;
     }, d => d.Gender);
-   
+
 
     var genderBrowsingPercent = new Map();
 
-    genderBrowsingCounts.forEach((browsing, gender) =>{
+    genderBrowsingCounts.forEach((browsing, gender) => {
         var tot = genderCounts.get(gender);
         browsing.forEach(b => {
-            b.percentage = (b.count/ tot) *100;
+            b.percentage = (b.count / tot) * 100;
         });
         genderBrowsingPercent.set(gender, browsing);
     });
 
     var xScale = d3.scaleBand()
-        .domain(d3.range(1,5).map(String))
+        .domain(d3.range(1, 5).map(String))
         .range([dimensions.margin.left, dimensions.width - dimensions.margin.right])
         .padding(0.1);
 
     var yScale = d3.scaleLinear()
-        .domain([0,50])
+        .domain([0, 50])
         .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top]);
-    
-    var genderColors = ["Orange", "Purple", "Gray","Blue"];
+
+    var genderColors = ["Magenta", "Green", "Blue", "Black"];
 
     var color = d3.scaleOrdinal()
         .domain(['Male', 'Female', 'Others', 'Prefer not to say'])
         .range(genderColors);
-    
+
     var line = d3.line()
         .x(d => xScale(String(d.browsing)) + xScale.bandwidth() / 2)
         .y(d => yScale(d.percentage));
@@ -102,9 +102,9 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .attr("x", -(dimensions.height / 2))
         .attr("y", 10)
         .attr("transform", "rotate(-90)")
-        .attr("dy", ".5em") 
+        .attr("dy", ".5em")
         .text("Percentage of Gender");
-    
+
     // Add legend
     var legend = svg.selectAll(".legend")
         .data(genderBrowsingCounts.keys())
