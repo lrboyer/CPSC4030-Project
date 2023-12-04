@@ -16,39 +16,46 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
     var heightMen = 500;
     var radiusMen = Math.min(widthMen, heightMen) / 2;
 
-    // Create a color scale for the men's pie chart
-    var colorMen = d3.scaleOrdinal(d3.schemeCategory10);
+    var categoryOrder = ["Multiple times a week", "Once a week", "Few times a month", "Once a month", "Less than once a month"];
 
-    // Create a pie layout for the men's pie chart
-    var pieMen = d3.pie()
-        .value(function(d) { return d.count; });
-
-    // Create an SVG element for the men's pie chart
-    var svgMen = d3.select("#pie-chart-men")  //  a unique ID for the men's pie chart
+    // Create a color scale
+    var color = d3.scaleOrdinal()
+        .domain(categoryOrder)
+        .range(["#c7e9c0", "#a1d99b", "#74c476", "#41ab5d", "#238b45"]); // good green
+    
+    // Create a pie layout
+    var pie = d3.pie()
+        .value(function(d) { return d.count; })
+        .sort(function(a, b) {
+            return categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category);
+        });
+    
+    // Create an SVG element
+    var svgMen = d3.select("#pie-chart-men")
         .attr("width", widthMen)
         .attr("height", heightMen)
         .append("g")
         .attr("transform", "translate(" + widthMen / 2 + "," + heightMen / 2 + ")");
-
-    // Create the pie chart arcs for men
-    var arcMen = d3.arc()
+    
+    // Create the pie chart arcs
+    var arc = d3.arc()
         .innerRadius(0)
         .outerRadius(radiusMen);
-
-    // Create the pie chart slices for men
-    var slicesMen = svgMen.selectAll("path")
-        .data(pieMen(pieDataMen))
+    
+    // Create the pie chart slices
+    var slices = svgMen.selectAll("path")
+        .data(pie(pieDataMen))
         .enter()
         .append("path")
-        .attr("d", arcMen)
-        .attr("fill", function(d, i) { return colorMen(d.data.category); });
+        .attr("d", arc)
+        .attr("fill", function(d, i) { return color(d.data.category); });
 
     // Create a separate selection for labels for men
     var labelsMen = svgMen.selectAll("text")
-        .data(pieMen(pieDataMen))
+        .data(pie(pieDataMen))
         .enter()
         .append("text")
-        .attr("transform", function(d) { return "translate(" + arcMen.centroid(d) + ")"; })
+        .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
         .attr("dy", ".35em")
         .style("text-anchor", "middle")
         .text(function(d) { return d.data.category; });
@@ -64,7 +71,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
     legendMen.append("rect")
         .attr("width", 18)
         .attr("height", 18)
-        .style("fill", function(d) { return colorMen(d.category); });
+        .style("fill", function(d) { return color(d.category); });
 
     legendMen.append("text")
         .attr("x", 24)

@@ -85,3 +85,13 @@ body, html {
 #pie-chart-men {
     max-width: 100%;
 }
+
+.tooltip {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 12px;
+    pointer-events: none;
+}
+
