@@ -84,6 +84,7 @@ body, html {
 #pie-chart-women,
 #pie-chart-men {
     max-width: 100%;
+    overflow: visible;
 }
 
 .tooltip {

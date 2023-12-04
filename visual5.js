@@ -1,3 +1,5 @@
+var menSlices;
+
 // Load the data from the CSV file
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
     // Filter the data by gender and purchase frequency for men
@@ -43,12 +45,51 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
         .outerRadius(radiusMen);
     
     // Create the pie chart slices
-    var slices = svgMen.selectAll("path")
+    menSlices = svgMen.selectAll("path")
         .data(pie(pieDataMen))
         .enter()
         .append("path")
         .attr("d", arc)
-        .attr("fill", function(d, i) { return color(d.data.category); });
+        .attr("fill", function(d, i) { return color(d.data.category); })
+        .on("mouseover", function(event, d) {
+            console.log("Mouseover data: " + d);
+            // Emphasize the selected slice
+            d3.select(this)
+                .transition()
+                .duration(100)
+                .attr("d", d3.arc().innerRadius(0).outerRadius(radiusMen + 10))
+                .attr("stroke", "black")  // Add a black border
+                .attr("stroke-width", 2);
+
+                var correspondingSliceWomen = womenSlices.filter(function(stuff) {
+                    return stuff.data.category === d.data.category;
+                });    
+
+                correspondingSliceWomen.transition()
+                    .duration(100)
+                    .attr("stroke", "black")  // Add a black border
+                    .attr("stroke-width", 2);
+            
+        })
+        .on("mouseout", function(event, d) {
+            // Reset the emphasized slice on mouseout
+            d3.select(this)
+                .transition()
+                .duration(100)
+                .attr("d", arc)
+                .attr("fill", function(d) { return color(d.data.category); })
+                .attr("stroke", "none");
+            
+            var correspondingSliceWomen = womenSlices.filter(function(stuff) {
+                return stuff.data.category === d.data.category;
+            });
+
+            correspondingSliceWomen.transition()
+                .duration(100)
+                .attr("d", arc)  
+                .attr("fill", function(d) { return color(d.data.category); })
+                .attr("stroke", "none");
+        });
 
     // Create a separate selection for labels for men
     var labelsMen = svgMen.selectAll("text")
@@ -60,22 +101,4 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
         .style("text-anchor", "middle")
         .text(function(d) { return d.data.category; });
 
-    // Add a legend for men
-    var legendMen = svgMen.selectAll(".legend")
-        .data(pieDataMen)
-        .enter()
-        .append("g")
-        .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(" + (widthMen / 2 + 20) + "," + (i * 20 - 50) + ")"; });
-
-    legendMen.append("rect")
-        .attr("width", 18)
-        .attr("height", 18)
-        .style("fill", function(d) { return color(d.category); });
-
-    legendMen.append("text")
-        .attr("x", 24)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .text(function(d) { return d.category; });
 });
