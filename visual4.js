@@ -56,7 +56,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
         .attr("d", arc)
         .attr("fill", function(d, i) { return color(d.data.category); })
         .on("mouseover", function(event, d) {
-            console.log("Mouseover data: " + d);
+            //console.log("Mouseover data: " + d);
             // Emphasize the selected slice
             d3.select(this)
                 .transition()

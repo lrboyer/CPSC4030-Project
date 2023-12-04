@@ -1,4 +1,5 @@
 var menSlices;
+var labelsMen;
 
 // Load the data from the CSV file
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
@@ -44,6 +45,18 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
         .innerRadius(0)
         .outerRadius(radiusMen);
     
+
+/*// Create a separate selection for labels for men
+labelsMen = svgMen.selectAll("text")
+    .data(pie(pieDataMen))
+    .enter()
+    .append("text")
+    .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+    .attr("dy", ".35em")
+    .style("text-anchor", "middle")
+    .text(function(d) { return d.data.category; })
+    //.style("display", "none");  // Set initial display to none*/
+
     // Create the pie chart slices
     menSlices = svgMen.selectAll("path")
         .data(pie(pieDataMen))
@@ -52,24 +65,27 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
         .attr("d", arc)
         .attr("fill", function(d, i) { return color(d.data.category); })
         .on("mouseover", function(event, d) {
-            console.log("Mouseover data: " + d);
+            
             // Emphasize the selected slice
             d3.select(this)
                 .transition()
                 .duration(100)
                 .attr("d", d3.arc().innerRadius(0).outerRadius(radiusMen + 10))
                 .attr("stroke", "black")  // Add a black border
+                .attr("stroke-width", 2)
+                //.style("display", "block");
+
+            var correspondingSliceWomen = womenSlices.filter(function(stuff) {
+                return stuff.data.category === d.data.category;
+            });    
+
+            correspondingSliceWomen.transition()
+                .duration(100)
+                .attr("stroke", "black")  // Add a black border
                 .attr("stroke-width", 2);
 
-                var correspondingSliceWomen = womenSlices.filter(function(stuff) {
-                    return stuff.data.category === d.data.category;
-                });    
-
-                correspondingSliceWomen.transition()
-                    .duration(100)
-                    .attr("stroke", "black")  // Add a black border
-                    .attr("stroke-width", 2);
-            
+            // Toggle visibility of the label associated with the hovered slice
+            //labelsMen.nodes()[i].style.display = "block";
         })
         .on("mouseout", function(event, d) {
             // Reset the emphasized slice on mouseout
@@ -79,7 +95,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
                 .attr("d", arc)
                 .attr("fill", function(d) { return color(d.data.category); })
                 .attr("stroke", "none");
-            
+
             var correspondingSliceWomen = womenSlices.filter(function(stuff) {
                 return stuff.data.category === d.data.category;
             });
@@ -89,16 +105,20 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
                 .attr("d", arc)  
                 .attr("fill", function(d) { return color(d.data.category); })
                 .attr("stroke", "none");
+
+            // Toggle visibility of the label associated with the hovered slice
+            //labelsMen.nodes()[i].style.display = "none";
         });
 
     // Create a separate selection for labels for men
-    var labelsMen = svgMen.selectAll("text")
+    labelsMen = svgMen.selectAll("text")
         .data(pie(pieDataMen))
         .enter()
         .append("text")
         .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
         .attr("dy", ".35em")
         .style("text-anchor", "middle")
-        .text(function(d) { return d.data.category; });
-
+        .text(function(d) { return d.data.category; })
+        //.style("display", "none");  // Set initial display to none
 });
+
