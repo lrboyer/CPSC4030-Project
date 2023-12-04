@@ -26,7 +26,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
         .value(function(d) { return d.count; });
 
     // Create an SVG element
-    var svg = d3.select("#pie-chart")
+    var svg = d3.select("#pie-chart-women")
         .attr("width", width)
         .attr("height", height)
         .append("g")
@@ -73,5 +73,26 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
         .attr("y", 9)
         .attr("dy", ".35em")
         .text(function(d) { return d.category; });
+
+
+    // Create a tooltip
+    var tooltip = d3.select("#pie-chart-women-container").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+    // Add interactivity
+    slices.on("mouseover", function(d) {
+    tooltip.transition()
+        .duration(200)
+        .style("opacity", .9);
+    tooltip.html(d.data.category + ": " + d.data.count)
+        .style("left", (d3.event.pageX) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
+    })
+    .on("mouseout", function(d) {
+        tooltip.transition()
+            .duration(500)
+            .style("opacity", 0);
+    });
 });
 
