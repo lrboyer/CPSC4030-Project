@@ -7,16 +7,21 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         width: 900,
         height: 600,
         margin: {
-            top: 20,
-            bottom: 60,
-            right: 20,
+            top: 60,
+            bottom: 90,
+            right: 60,
             left: 60
         }
     }
 
     var svg = d3.select("#visual1")
         .style("width", dimensions.width)
-        .style("height", dimensions.height);
+        .style("height", dimensions.height)
+        .append("g")
+        .attr("transform", `translate(${dimensions.margin.left},${dimensions.margin.top})`);
+
+
+    var v1Text = document.getElementById('v1Text');
 
     svg.style("background-color", "white");
 
@@ -68,7 +73,33 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .attr("class", "gender-line")
         .attr("d", d => line(d))
         .style("stroke", (d, i) => color(Array.from(genderSatisfactionPercentages.keys())[i]))
-        .style("fill", "none");
+        .style("fill", "none")
+        .on('mouseover', function (d, i) {
+            var genderData = i; // Array containing satisfaction counts for the specific gender
+
+            var textContent = "";
+            genderData.forEach(count => {
+                textContent += `Satisfaction ${count.satisfaction}: ${count.percentage.toFixed(2)}%\n`;
+            });
+
+            v1Text.textContent = textContent;
+
+            // Retrieve the x and y coordinates of the hovered point using D3's mouse event
+            var [mouseX, mouseY] = d3.mouse(this);
+            var xValue = xScale.invert(mouseX); // Get the x value from the scale using the mouse position
+            var closestPoint = genderData.find(d => d.satisfaction == xValue); // Find the closest data point
+            var hoveredX = xScale(String(closestPoint.satisfaction)) + xScale.bandwidth() / 2;
+            var hoveredY = yScale(closestPoint.percentage);
+
+            // Append a single circle to highlight the hovered data point
+            svg.append("circle")
+                .attr("class", "highlight-circle")
+                .attr("cx", hoveredX)
+                .attr("cy", hoveredY)
+                .attr("r", 4) // Radius of the circle
+                .style("fill", "red"); // Color of the circle, adjust as needed
+        })
+
 
     // Add x-axis
     svg.append("g")
