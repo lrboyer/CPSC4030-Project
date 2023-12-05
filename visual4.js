@@ -1,6 +1,9 @@
 var legend;
 
 var womenSlices;
+var colorWomen;
+
+var colorArrayFemale = ["#ff3399", "#ff66b2", "#ff99cc", "#ffccd5", "#ffe6eb"];
 
 // Load the data from the CSV file
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
@@ -24,10 +27,11 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
     var categoryOrder = ["Multiple times a week", "Once a week", "Few times a month", "Once a month", "Less than once a month"];
 
     // Create a color scale
-    var color = d3.scaleOrdinal()
+    colorWomen = d3.scaleOrdinal()
         .domain(categoryOrder)
+        .range(colorArrayFemale);
         //.range(["#ff3399", "#ff66b2", "#ff99cc", "#ffccd5", "#ffe6eb"]); // decent pink
-        .range(["#c7e9c0", "#a1d99b", "#74c476", "#41ab5d", "#238b45"]); // good green
+        //.range(["#c7e9c0", "#a1d99b", "#74c476", "#41ab5d", "#238b45"]); // good green
     
     // Create a pie layout
     var pie = d3.pie()
@@ -54,7 +58,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
         .enter()
         .append("path")
         .attr("d", arc)
-        .attr("fill", function(d, i) { return color(d.data.category); })
+        .attr("fill", function(d, i) { return colorWomen(d.data.category); })
         .on("mouseover", function(event, d) {
             //console.log("Mouseover data: " + d);
             // Emphasize the selected slice
@@ -81,7 +85,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
                 .transition()
                 .duration(100)
                 .attr("d", arc)
-                .attr("fill", function(d) { return color(d.data.category); })
+                .attr("fill", function(d) { return colorWomen(d.data.category); })
                 .attr("stroke", "none");
             
             var correspondingSliceMen = menSlices.filter(function(stuff) {
@@ -91,7 +95,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
             correspondingSliceMen.transition()
                 .duration(100)
                 .attr("d", arc)  
-                .attr("fill", function(d) { return color(d.data.category); })
+                .attr("fill", function(d) { return colorMen(d.data.category); })
                 .attr("stroke", "none");
         });
 
@@ -111,7 +115,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
         return categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category);
     });
 
-    // Add a legend
+    /*// Add a legend
     legend = svg.selectAll(".legend")
         .data(pieData)
         .enter()
@@ -128,7 +132,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
         .attr("x", 24)
         .attr("y", 9)
         .attr("dy", ".35em")
-        .text(function(d) { return d.category; });
+        .text(function(d) { return d.category; });*/
 
 
     
