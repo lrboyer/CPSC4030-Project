@@ -69,3 +69,30 @@ body, html {
     
 }
 
+#pie-charts-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+#pie-chart-women-container,
+#pie-chart-men-container {
+    justify-content: center;
+    text-align: center;
+}
+
+#pie-chart-women,
+#pie-chart-men {
+    max-width: 100%;
+    overflow: visible;
+}
+
+.tooltip {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 12px;
+    pointer-events: none;
+}
+
