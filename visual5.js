@@ -1,5 +1,10 @@
 var menSlices;
 var labelsMen;
+var colorMen;
+//var colorArrayMale = ["#66c2ff", "#4da6ff", "#3389ff", "#1a66ff", "#0052cc"];
+var colorArrayMale = ["#0052cc", "#1a66ff", "#3389ff", "#4da6ff", "#66c2ff"];
+
+
 
 // Load the data from the CSV file
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
@@ -22,9 +27,12 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
     var categoryOrder = ["Multiple times a week", "Once a week", "Few times a month", "Once a month", "Less than once a month"];
 
     // Create a color scale
-    var color = d3.scaleOrdinal()
+    colorMen = d3.scaleOrdinal()
         .domain(categoryOrder)
-        .range(["#c7e9c0", "#a1d99b", "#74c476", "#41ab5d", "#238b45"]); // good green
+        //.range(["#c7e9c0", "#a1d99b", "#74c476", "#41ab5d", "#238b45"]); // good green
+        //.range(["#66c2ff", "#4da6ff", "#3389ff", "#1a66ff", "#0052cc"]);
+        .range(colorArrayMale);
+
     
     // Create a pie layout
     var pie = d3.pie()
@@ -63,7 +71,7 @@ labelsMen = svgMen.selectAll("text")
         .enter()
         .append("path")
         .attr("d", arc)
-        .attr("fill", function(d, i) { return color(d.data.category); })
+        .attr("fill", function(d, i) { return colorMen(d.data.category); })
         .on("mouseover", function(event, d) {
             
             // Emphasize the selected slice
@@ -93,7 +101,7 @@ labelsMen = svgMen.selectAll("text")
                 .transition()
                 .duration(100)
                 .attr("d", arc)
-                .attr("fill", function(d) { return color(d.data.category); })
+                .attr("fill", function(d) { return colorMen(d.data.category); })
                 .attr("stroke", "none");
 
             var correspondingSliceWomen = womenSlices.filter(function(stuff) {
@@ -103,7 +111,7 @@ labelsMen = svgMen.selectAll("text")
             correspondingSliceWomen.transition()
                 .duration(100)
                 .attr("d", arc)  
-                .attr("fill", function(d) { return color(d.data.category); })
+                .attr("fill", function(d) { return colorWomen(d.data.category); })
                 .attr("stroke", "none");
 
             // Toggle visibility of the label associated with the hovered slice
