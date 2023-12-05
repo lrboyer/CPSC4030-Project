@@ -2,7 +2,6 @@
 // Shopping satisfaction x gender (percentage)
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
-
     var dimensions = {
         width: 900,
         height: 600,
@@ -17,13 +16,10 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     var svg = d3.select("#visual1")
         .style("width", dimensions.width)
         .style("height", dimensions.height)
-        .append("g")
-        .attr("transform", `translate(${dimensions.margin.left},${dimensions.margin.top})`);
-
-
-    var v1Text = document.getElementById('v1Text');
 
     svg.style("background-color", "white");
+
+    var v1Text = document.getElementById('v1Text');
 
     var genderCounts = d3.rollup(dataset, v => v.length, d => d.Gender);
 
