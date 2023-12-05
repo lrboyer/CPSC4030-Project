@@ -1,5 +1,5 @@
 // Made by: Lucas Boyer
-// Shopping satisfaction x gender (percentage)
+// Shopping satisfaction x gender (percentage) line
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
     var dimensions = {

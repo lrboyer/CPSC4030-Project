@@ -11,10 +11,9 @@
 <body>
     <script src="satisfaction_x_gender.js"></script>
     <script src="browse_purchase_x_gender.js"></script>
-    <script src="visual3.js"></script>
+    <script src="satisfactionBar.js"></script>
     <script src="visual4.js"></script>
     <script src="visual5.js"></script>
-
 
 
     <div class="centered">
@@ -46,12 +45,21 @@
                 
                 <div class="text">
                     <p>
-                        This is user shopping satisfaction by gender.
+                        User Shopping Satisfaction by Gender (line).
                     </p>
                 </div>
             </div>
 
-            <div class="visual">
+            <div>
+                <svg id="satisfactionBar"></svg>
+                <div class="text">
+                    <p>
+                        User Shopping Satisfaction by Gender (stacked bar).
+                    </p>
+                </div>
+            </div>
+
+            <div>
                 <svg id="visual2">
                     <foreignObject x="100" y="10" width="130" height="40">
 
@@ -73,6 +81,7 @@
                     </p>
                 </div>
             </div>
+    
         </div>
 
         <div id="pie-charts-container">
