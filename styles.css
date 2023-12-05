@@ -49,21 +49,6 @@ body, html {
 
 }
 
-/* Interactive and Double sections */
-#interactive {
-    display: flex;
-    flex-direction: column; /* Use flex-direction: column for both */
-    justify-content: center;
-    padding: 30px 0 30px 0;
-}
-
-#double {
-    gap: 50px; /* Apply gap to #double only */
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
-
 .text {
     width: 100%;
     

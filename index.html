@@ -12,8 +12,10 @@
     <script src="satisfaction_x_gender.js"></script>
     <script src="browse_purchase_x_gender.js"></script>
     <script src="visual3.js"></script>
-    
-    
+    <script src="visual4.js"></script>
+    <script src="visual5.js"></script>
+
+
 
     <div class="centered">
         <div class="title">
@@ -27,70 +29,50 @@
         </div>
 
         <div>
-            <p>
-                These visuals were made from Amazon Customer Behavior Survey. 
+            <h3>
+                The dataset used for these visualizations is from an Amazon Customer Behavior Survey.
+                We were interested in the average Amazon shopper's behavior and wondered if it differs by gender.
+            </h3>
+            <ul>
+                <li>Shopping Satisfaction: How satisfied are you with your overall shopping experience on Amazon? 1-5. 1 being not satisfied, 5 being very satisfied</li>
+                <li>Browsing Frequency: How often do you browse Amazon's website or app? 1-4. Rarely, Few times a month, Few times a week, Multiple times a day</li>
+                <li>Purchase Frequency: How frequently do you make purchases on Amazon? Multiple times a week, Once a week, Few times a month, Once a month, Less than once a month</li>
             </p>
         </div>
 
         <div class="visual">
             <div>
+                <svg id="visual1"></svg>
                 
-                <svg id="visual1">
-                    
+                <div class="text">
+                    <p>
+                        This is user shopping satisfaction by gender.
+                    </p>
+                </div>
+            </div>
+
+            <dic class="visual">
+                <svg id="visual2">
+                    <foreignObject x="100" y="10" width="130" height="40">
+
+                        <body>
+                            <label for="genderFilter">Select Gender:</label>
+                            <select id="genderFilter">
+                                <option value="All"> All</option>
+                                <option value="Male"> Male</option>
+                                <option value="Female"> Female</option>
+                                <option value="Others"> Other</option>
+                                <option value="Prefer not to say"> Prefer Not to Say</option>
+                            </select>
+                        </body>
+                    </foreignObject>
                 </svg>
                 <div class="text">
                     <p>
-                        This is user satisfaction by gender
+                        Browsing Frequency By Gender (%)
                     </p>
                 </div>
-            </div>
-            
-        
-
-            <div id="interactive">
-                <div id="double">
-                    <svg id = "visual2">
-                        <foreignObject x = "100" y = "10" width = "130" height = "40">
-                            <body >
-                                <label for="genderFilter">Select Gender:</label>
-                                <select id = "genderFilter">
-                                    <option value = "All"> All</option>
-                                    <option value = "Male"> Male</option>
-                                    <option value = "Female"> Female</option>
-                                    <option value = "Others"> Other</option>
-                                    <option value = "Prefer not to say"> Prefer Not to Say</option>
-                                </select>
-                            </body>
-                        </foreignObject> 
-                    </svg>
-
-                    <svg width="700" height="500">
-                        <rect x="0" y="0" width="700" height="500" fill="blue" />
-
-                        
-
-                    </svg>
-                </div>
-
-                <div class="text">
-                    <p>
-                        Browsing and Purchase Frequency By Gender (%)
-                    </p>
-                </div>
-
-            </div>
-
-            <div>
-                <svg width="700" height="500">
-                    <rect x="0" y="0" width="700" height="500" fill="green" />
-                </svg>
-
-                <div class="text">
-                    <p>
-                        Browsing and Purchase Frequency By Gender (%)
-                    </p>
-                </div>
-            </div>
+            </dic>
         </div>
 
         <div id="pie-charts-container">
@@ -98,7 +80,7 @@
                 <svg id="pie-chart-women"></svg>
                 <div class="text">
                     <p>
-                        Shopping Frequency (Women)
+                        Purchase Frequency (Women)
                     </p>
                 </div>
             </div>
@@ -106,16 +88,12 @@
                 <svg id="pie-chart-men"></svg>
                 <div class="text">
                     <p>
-                        Shopping Frequency (Men)
+                        Purchase Frequency (Men)
                     </p>
                 </div>
             </div>
-        
-        </div>
 
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="visual4.js"></script>
-    <script src="visual5.js"></script>
+        </div>
 </body>
 
 </html>

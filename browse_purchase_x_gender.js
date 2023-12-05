@@ -1,12 +1,12 @@
 //Made by Trevor Rizzo
-//Browsing and Purchase Frequency By Gender (%)
+//Browsing Frequency By Gender (%)
 
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
-
+    console.log(dataset)
 
     var dimensions = {
-        width: 700,
-        height: 500,
+        width: 900,
+        height: 600,
         margin: {
             top: 20,
             bottom: 60,
@@ -56,12 +56,12 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
     var minPercent = d3.min(Array.from(genderBrowsingPercent.values()).flat(), d => d.percentage);
     var maxPercent = d3.max(Array.from(genderBrowsingPercent.values()).flat(), d => d.percentage);
-    
+
     var yScale = d3.scaleLinear()
         .domain([minPercent, maxPercent])
-        .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top+50]);
+        .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top + 50]);
 
-    var genderColors = ["Blue", "Pink", "Grey", "Black"];
+    var genderColors = ["Blue", "Magenta", "Grey", "Black"];
 
     var color = d3.scaleOrdinal()
         .domain(['Male', 'Female', 'Others', 'Prefer not to say'])
@@ -70,19 +70,19 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     var line = d3.line()
         .x(d => xScale(String(d.browsing)) + xScale.bandwidth() / 2)
         .y(d => yScale(d.percentage));
-     
-        
+
+
 
     var genderLines = svg.selectAll(".gender-line")
         .data(Array.from(genderBrowsingPercent.values()))
         .enter()
         .append("path")
         .attr("class", "gender-line")
-        .attr("d" , d => line(d))
+        .attr("d", d => line(d))
         .style("stroke", (d, i) => color(Array.from(genderBrowsingPercent.keys())[i]))
         .style("fill", "none");
-        
-  
+
+
     // Add x-axis
     svg.append("g")
         .attr("class", "x-axis")
@@ -94,7 +94,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .attr("text-anchor", "middle")
         .attr("x", dimensions.width / 2)
         .attr("y", dimensions.height - 10)
-        .text("Browsing Levels");
+        .text("Browsing Frequency Levels");
 
 
     // Add y-axis
@@ -113,8 +113,10 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .text("Percentage of Gender");
 
     // Add legend
+    const orderedGenders = ["Male", "Female", "Prefer not to say", "Others"]
+
     var legend = svg.selectAll(".legend")
-        .data(genderBrowsingCounts.keys())
+        .data(orderedGenders)
         .enter()
         .append("g")
         .attr("class", "legend")
@@ -132,16 +134,16 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .attr("dy", ".35em")
         .style("text-anchor", "end")
         .text(d => d);
-        
 
-        function updateVis(gender){
-            if(gender != "All"){
-                var genderData = [genderBrowsingPercent.get(gender)];
-                var newGenderLine = svg.selectAll(".gender-line")
+
+    function updateVis(gender) {
+        if (gender != "All") {
+            var genderData = [genderBrowsingPercent.get(gender)];
+            var newGenderLine = svg.selectAll(".gender-line")
                 .data(genderData);
 
             newGenderLine.exit().remove();
-            
+
             newGenderLine.enter()
                 .append("path")
                 .attr("class", "gender-line")
@@ -151,36 +153,35 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
                 .attr("d", d => line(d))
                 .style("stroke", color(gender))
                 .style("fill", "none");
-            }
-            else{
-                var genderData = Array.from(genderBrowsingPercent.values());
-                var newGenderLine = svg.selectAll(".gender-line")
+        }
+        else {
+            var genderData = Array.from(genderBrowsingPercent.values());
+            var newGenderLine = svg.selectAll(".gender-line")
                 .data(genderData);
 
-                newGenderLine.exit().remove();
-                
-                newGenderLine.enter()
-                    .append("path")
-                    .attr("class", "gender-line")
-                    .merge(newGenderLine)
-                    .transition()
-                    .duration(100)
-                    .attr("d", d => line(d))
-                    .style("stroke", (d, i) => color(Array.from(genderBrowsingPercent.keys())[i]))
-                    .style("fill", "none");
-            }
-            
-            
-            
+            newGenderLine.exit().remove();
+
+            newGenderLine.enter()
+                .append("path")
+                .attr("class", "gender-line")
+                .merge(newGenderLine)
+                .transition()
+                .duration(100)
+                .attr("d", d => line(d))
+                .style("stroke", (d, i) => color(Array.from(genderBrowsingPercent.keys())[i]))
+                .style("fill", "none");
         }
-        
-        var selected = d3.select("#genderFilter");
-        selected.on("change", function()
-        {
-            var selection = selected.property("value");
-            updateVis(selection);
-        });
-        
+
+
+
+    }
+
+    var selected = d3.select("#genderFilter");
+    selected.on("change", function () {
+        var selection = selected.property("value");
+        updateVis(selection);
+    });
+
 });
 
 
