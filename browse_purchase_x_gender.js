@@ -113,8 +113,10 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .text("Percentage of Gender");
 
     // Add legend
-    var legend = svg.selectAll(".legend")
-        .data(genderBrowsingCounts.keys())
+
+    const orderedGenders = ["Male", "Female", "Prefer not to say", "Others"]
+    const legend = svg.selectAll(".legend")
+        .data(orderedGenders)
         .enter()
         .append("g")
         .attr("class", "legend")
