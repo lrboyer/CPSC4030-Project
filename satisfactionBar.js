@@ -70,6 +70,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .domain(genders)
         .range(customColors);
 
+    console.log(dataForStackedBar)
     svg.selectAll()
         .data(d3.stack().keys(genders)(dataForStackedBar))
         .enter().append("g")
@@ -80,7 +81,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .attr("x", d => xScale(String(d.data.satisfaction)))
         .attr("y", d => yScale(d[1]))
         .attr("height", d => yScale(d[0]) - yScale(d[1]))
-        .attr("width", xScale.bandwidth());
+        .attr("width", xScale.bandwidth())
 
 
     svg.append("g")
