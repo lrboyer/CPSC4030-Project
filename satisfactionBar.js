@@ -2,8 +2,8 @@
 // Shopping satisfaction x gender (percentage) stacked bar
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     const dimensions = {
-        width: 800,
-        height: 400,
+        width: 500,
+        height: 350,
         margin: { top: 20, right: 60, bottom: 60, left: 60 },
         barPadding: 0.2
     };
