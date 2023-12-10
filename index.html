@@ -11,111 +11,52 @@
 <body>
     <script src="satisfaction_x_gender.js"></script>
     <script src="browse_purchase_x_gender.js"></script>
-    <script src="visual3.js"></script>
-    
-    
-
-    <div class="centered">
-        <div class="title">
-            <h1>
-                CPSC 4030-Project
-            </h1>
-
-            <p>
-                Made by Trevor Rizzo, Lucas Boyer, Garrett Versteegh
-            </p>
-        </div>
-
-        <div>
-            <p>
-                These visuals were made from Amazon Customer Behavior Survey. 
-            </p>
-        </div>
-
-        <div class="visual">
-            <div>
-                
-                <svg id="visual1">
-                    
-                </svg>
-                <div class="text">
-                    <p>
-                        This is user satisfaction by gender
-                    </p>
-                </div>
-            </div>
-            
-        
-
-            <div id="interactive">
-                <div id="double">
-                    <svg id = "visual2">
-                        <foreignObject x = "100" y = "10" width = "130" height = "40">
-                            <body >
-                                <label for="genderFilter">Select Gender:</label>
-                                <select id = "genderFilter">
-                                    <option value = "All"> All</option>
-                                    <option value = "Male"> Male</option>
-                                    <option value = "Female"> Female</option>
-                                    <option value = "Others"> Other</option>
-                                    <option value = "Prefer not to say"> Prefer Not to Say</option>
-                                </select>
-                            </body>
-                        </foreignObject> 
-                    </svg>
-
-                    <svg width="700" height="500">
-                        <rect x="0" y="0" width="700" height="500" fill="blue" />
-
-                        
-
-                    </svg>
-                </div>
-
-                <div class="text">
-                    <p>
-                        Browsing and Purchase Frequency By Gender (%)
-                    </p>
-                </div>
-
-            </div>
-
-            <div>
-                <svg width="700" height="500">
-                    <rect x="0" y="0" width="700" height="500" fill="green" />
-                </svg>
-
-                <div class="text">
-                    <p>
-                        Browsing and Purchase Frequency By Gender (%)
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div id="pie-charts-container">
-            <div id="pie-chart-women-container">
-                <svg id="pie-chart-women"></svg>
-                <div class="text">
-                    <p>
-                        Shopping Frequency (Women)
-                    </p>
-                </div>
-            </div>
-            <div id="pie-chart-men-container">
-                <svg id="pie-chart-men"></svg>
-                <div class="text">
-                    <p>
-                        Shopping Frequency (Men)
-                    </p>
-                </div>
-            </div>
-        
-        </div>
-
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="satisfactionBar.js"></script>
     <script src="visual4.js"></script>
     <script src="visual5.js"></script>
+
+
+    <div class="centered">
+        <div class="visuals">
+            <div class="visual">
+                <svg id="satisfactionBar"></svg>
+                <svg id="visual2">
+                        <foreignObject x="100" y="10" width="130" height="40">
+
+                            <body>
+                                <label for="genderFilter">Select Gender:</label>
+                                <select id="genderFilter">
+                                    <option value="All"> All</option>
+                                    <option value="Male"> Male</option>
+                                    <option value="Female"> Female</option>
+                                    <option value="Others"> Other</option>
+                                    <option value="Prefer not to say"> Prefer Not to Say</option>
+                                </select>
+                            </body>
+                        </foreignObject>
+                </svg>
+            </div>
+
+            <div id="pie-charts-container">
+                <div id="pie-chart-women-container">
+                    <svg id="pie-chart-women"></svg>
+                    <div class="text">
+                        <p>
+                            Purchase Frequency (Women)
+                        </p>
+                    </div>
+                </div>
+                <div id="pie-chart-men-container">
+                    <svg id="pie-chart-men"></svg>
+                    <div class="text">
+                        <p>
+                            Purchase Frequency (Men)
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 </body>
 
 </html>

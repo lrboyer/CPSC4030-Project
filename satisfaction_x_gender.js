@@ -1,7 +1,6 @@
 // Made by: Lucas Boyer
-// Shopping satisfaction x gender (percentage)
+// Shopping satisfaction x gender (percentage) line
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
-
 
     var dimensions = {
         width: 900,
@@ -51,7 +50,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .domain([0, 50])
         .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top]);
 
-    var customColors = ["Magenta", "Green", "Blue", "Black"];
+    var customColors = ["Magenta", "Black", "Blue", "Gray"];
 
     var color = d3.scaleOrdinal()
         .domain(genderSatisfactionCounts.keys())
@@ -100,9 +99,12 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .text("Percentage of Gender");
 
 
+    const orderedGenders = ["Male", "Female", "Prefer not to say", "Others"]
+
+
     // Add legend
     var legend = svg.selectAll(".legend")
-        .data(genderSatisfactionCounts.keys())
+        .data(orderedGenders)
         .enter()
         .append("g")
         .attr("class", "legend")

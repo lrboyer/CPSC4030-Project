@@ -7,9 +7,9 @@ var colorArrayMale = ["#0052cc", "#1a66ff", "#3389ff", "#4da6ff", "#66c2ff"];
 
 
 // Load the data from the CSV file
-d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
+d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function (data) {
     // Filter the data by gender and purchase frequency for men
-    var filteredDataMen = data.filter(function(d) {
+    var filteredDataMen = data.filter(function (d) {
         return d.Gender === "Male" && d.Purchase_Frequency;
     });
 
@@ -33,37 +33,37 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then(function(data) {
         //.range(["#66c2ff", "#4da6ff", "#3389ff", "#1a66ff", "#0052cc"]);
         .range(colorArrayMale);
 
-    
+
     // Create a pie layout
     var pie = d3.pie()
-        .value(function(d) { return d.count; })
-        .sort(function(a, b) {
+        .value(function (d) { return d.count; })
+        .sort(function (a, b) {
             return categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category);
         });
-    
+
     // Create an SVG element
     var svgMen = d3.select("#pie-chart-men")
         .attr("width", widthMen)
         .attr("height", heightMen)
         .append("g")
         .attr("transform", "translate(" + widthMen / 2 + "," + heightMen / 2 + ")");
-    
+
     // Create the pie chart arcs
     var arc = d3.arc()
         .innerRadius(0)
         .outerRadius(radiusMen);
-    
 
-/*// Create a separate selection for labels for men
-labelsMen = svgMen.selectAll("text")
-    .data(pie(pieDataMen))
-    .enter()
-    .append("text")
-    .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
-    .attr("dy", ".35em")
-    .style("text-anchor", "middle")
-    .text(function(d) { return d.data.category; })
-    //.style("display", "none");  // Set initial display to none*/
+
+    /*// Create a separate selection for labels for men
+    labelsMen = svgMen.selectAll("text")
+        .data(pie(pieDataMen))
+        .enter()
+        .append("text")
+        .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+        .attr("dy", ".35em")
+        .style("text-anchor", "middle")
+        .text(function(d) { return d.data.category; })
+        //.style("display", "none");  // Set initial display to none*/
 
     // Create the pie chart slices
     menSlices = svgMen.selectAll("path")
@@ -71,9 +71,9 @@ labelsMen = svgMen.selectAll("text")
         .enter()
         .append("path")
         .attr("d", arc)
-        .attr("fill", function(d, i) { return colorMen(d.data.category); })
-        .on("mouseover", function(event, d) {
-            
+        .attr("fill", function (d, i) { return colorMen(d.data.category); })
+        .on("mouseover", function (event, d) {
+
             // Emphasize the selected slice
             d3.select(this)
                 .transition()
@@ -81,11 +81,11 @@ labelsMen = svgMen.selectAll("text")
                 .attr("d", d3.arc().innerRadius(0).outerRadius(radiusMen + 10))
                 .attr("stroke", "black")  // Add a black border
                 .attr("stroke-width", 2)
-                //.style("display", "block");
+            //.style("display", "block");
 
-            var correspondingSliceWomen = womenSlices.filter(function(stuff) {
+            var correspondingSliceWomen = womenSlices.filter(function (stuff) {
                 return stuff.data.category === d.data.category;
-            });    
+            });
 
             correspondingSliceWomen.transition()
                 .duration(100)
@@ -95,23 +95,23 @@ labelsMen = svgMen.selectAll("text")
             // Toggle visibility of the label associated with the hovered slice
             //labelsMen.nodes()[i].style.display = "block";
         })
-        .on("mouseout", function(event, d) {
+        .on("mouseout", function (event, d) {
             // Reset the emphasized slice on mouseout
             d3.select(this)
                 .transition()
                 .duration(100)
                 .attr("d", arc)
-                .attr("fill", function(d) { return colorMen(d.data.category); })
+                .attr("fill", function (d) { return colorMen(d.data.category); })
                 .attr("stroke", "none");
 
-            var correspondingSliceWomen = womenSlices.filter(function(stuff) {
+            var correspondingSliceWomen = womenSlices.filter(function (stuff) {
                 return stuff.data.category === d.data.category;
             });
 
             correspondingSliceWomen.transition()
                 .duration(100)
-                .attr("d", arc)  
-                .attr("fill", function(d) { return colorWomen(d.data.category); })
+                .attr("d", arc)
+                .attr("fill", function (d) { return colorWomen(d.data.category); })
                 .attr("stroke", "none");
 
             // Toggle visibility of the label associated with the hovered slice
@@ -123,10 +123,10 @@ labelsMen = svgMen.selectAll("text")
         .data(pie(pieDataMen))
         .enter()
         .append("text")
-        .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+        .attr("transform", function (d) { return "translate(" + arc.centroid(d) + ")"; })
         .attr("dy", ".35em")
         .style("text-anchor", "middle")
-        .text(function(d) { return d.data.category; })
-        //.style("display", "none");  // Set initial display to none
+        .text(function (d) { return d.data.category; })
+    //.style("display", "none");  // Set initial display to none
 });
 
