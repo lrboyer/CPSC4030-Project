@@ -1,6 +1,8 @@
 //Made by Trevor Rizzo
 //Radar chart showing Purchase Frequency, Browsing Frequency, Cart Completion, Personalized Recommendation Use, and Shopping Satisfaction.
 
+function createRadarChart(gender, ageGroup){
+
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
     var dimensions = {
@@ -34,6 +36,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
     const reducedScale = 0.8;
     const titleMargin = 35;
+
     // Draw axes
     for (let i = 0; i < numAxes; i++) {
         
@@ -98,33 +101,208 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .domain(['Never', 'Rarely', 'Sometimes', 'Often', 'Always'])
         .range([1,2,3,4,5]);
 
-    const averagePurchaseFrequency = d3.mean(dataset, d => purchaseFrequencyOrdinal(d.Purchase_Frequency));
-    const averageBrowsingFrequency = d3.mean(dataset, d => browsingFrequencyOrdinal(d.Browsing_Frequency));
-    const averageCartCompletionFrequency = d3.mean(dataset, d => cartCompletionFrequency(d.Cart_Completion_Frequency));
-    const averagePersonalizedRecFrequency = d3.mean(dataset, d=> d["Personalized_Recommendation_Frequency "]);
-    const averageShoppingSatisfaction = d3.mean(dataset, d=> d.Shopping_Satisfaction);
-
-    console.log(averagePurchaseFrequency,averageBrowsingFrequency,averageCartCompletionFrequency,averagePersonalizedRecFrequency,averageShoppingSatisfaction);
-
-    const allCoordinates = dataset.map((dataPoint, index) =>{
-        const dataValues = [
-          averagePurchaseFrequency,
-          averageBrowsingFrequency,
-          averageCartCompletionFrequency,
-          averagePersonalizedRecFrequency,
-          averageShoppingSatisfaction
-          // Add other attributes here
-        ];
+    
+    var color = 'Orange';    
+    if(gender && !ageGroup){
+        const genderFilteredData = dataset.filter(d => d.Gender === gender);
         
-        return dataValues.map((value, i) => {
-            const angle = i * angleSlice - 90 * (Math.PI / 180);
-            const distance = radiusScale(value);
-            return {
-              x: Math.cos(angle) * distance,
-              y: Math.sin(angle) * distance
-            };
+        if(gender == "Male"){
+            color = 'Blue';
+        }
+        else if(gender == "Female"){
+            color = 'Pink';
+        }
+        else if(gender == "Others"){
+            color = 'Gray';
+        }
+        else{ 
+            color = 'White';
+        }
+
+        const averagePurchaseFrequency = d3.mean(genderFilteredData, d => purchaseFrequencyOrdinal(d.Purchase_Frequency));
+        const averageBrowsingFrequency = d3.mean(genderFilteredData, d => browsingFrequencyOrdinal(d.Browsing_Frequency));
+        const averageCartCompletionFrequency = d3.mean(genderFilteredData, d => cartCompletionFrequency(d.Cart_Completion_Frequency));
+        const averagePersonalizedRecFrequency = d3.mean(genderFilteredData, d=> d["Personalized_Recommendation_Frequency "]);
+        const averageShoppingSatisfaction = d3.mean(genderFilteredData, d=> d.Shopping_Satisfaction);
+    
+        var allCoordinates = genderFilteredData.map((dataPoint, index) =>{
+            const dataValues = [
+              averagePurchaseFrequency,
+              averageBrowsingFrequency,
+              averageCartCompletionFrequency,
+              averagePersonalizedRecFrequency,
+              averageShoppingSatisfaction
+            ];
+            
+            return dataValues.map((value, i) => {
+                const angle = i * angleSlice - 90 * (Math.PI / 180);
+                const distance = radiusScale(value);
+                return {
+                  x: Math.cos(angle) * distance,
+                  y: Math.sin(angle) * distance
+                };
+            });
         });
-    });
+    }
+    else if(ageGroup && !gender){
+        var minAge;
+        var maxAge;
+        if(ageGroup == 1)
+        {
+            minAge = 10;
+            maxAge = 20;
+        }
+        else if(ageGroup == 2)
+        {
+            minAge = 21;
+            maxAge = 30;
+        }
+        else if(ageGroup == 3)
+        {
+            minAge = 31;
+            maxAge = 40;
+        }
+        else if(ageGroup == 4)
+        {
+            minAge = 41;
+            maxAge = 50;
+        }
+        else if(ageGroup == 5)
+        {
+            minAge = 51;
+            maxAge = 60;
+        }
+        const ageFilteredData = dataset.filter(d =>{
+            const age = +d.age;
+            return age >= minAge && age <= maxAge;
+        });
+        
+        const averagePurchaseFrequency = d3.mean(ageFilteredData, d => purchaseFrequencyOrdinal(d.Purchase_Frequency));
+        const averageBrowsingFrequency = d3.mean(ageFilteredData, d => browsingFrequencyOrdinal(d.Browsing_Frequency));
+        const averageCartCompletionFrequency = d3.mean(ageFilteredData, d => cartCompletionFrequency(d.Cart_Completion_Frequency));
+        const averagePersonalizedRecFrequency = d3.mean(ageFilteredData, d=> d["Personalized_Recommendation_Frequency "]);
+        const averageShoppingSatisfaction = d3.mean(ageFilteredData, d=> d.Shopping_Satisfaction);
+    
+        var allCoordinates = ageFilteredData.map((dataPoint, index) =>{
+            const dataValues = [
+              averagePurchaseFrequency,
+              averageBrowsingFrequency,
+              averageCartCompletionFrequency,
+              averagePersonalizedRecFrequency,
+              averageShoppingSatisfaction
+            ];
+            
+            return dataValues.map((value, i) => {
+                const angle = i * angleSlice - 90 * (Math.PI / 180);
+                const distance = radiusScale(value);
+                return {
+                  x: Math.cos(angle) * distance,
+                  y: Math.sin(angle) * distance
+                };
+            });
+        });
+    }
+    else if(gender && ageGroup){
+
+        if(gender == "Male"){
+            color = 'Blue';
+        }
+        else if(gender == "Female"){
+            color = 'Pink';
+        }
+        else if(gender == "Others"){
+            color = 'Gray';
+        }
+        else{ 
+            color = 'White';
+        }
+
+        var minAge;
+        var maxAge;
+        if(ageGroup == 1)
+        {
+            minAge = 10;
+            maxAge = 20;
+        }
+        else if(ageGroup == 2)
+        {
+            minAge = 21;
+            maxAge = 30;
+        }
+        else if(ageGroup == 3)
+        {
+            minAge = 31;
+            maxAge = 40;
+        }
+        else if(ageGroup == 4)
+        {
+            minAge = 41;
+            maxAge = 50;
+        }
+        else if(ageGroup == 5)
+        {
+            minAge = 51;
+            maxAge = 60;
+        }
+        const genderFilteredData = dataset.filter(d => d.Gender === gender);
+        const bothFilteredData = genderFilteredData.filter(d =>{
+            const age = +d.age;
+            return age >= minAge && age <= maxAge;
+        });
+
+        const averagePurchaseFrequency = d3.mean(bothFilteredData, d => purchaseFrequencyOrdinal(d.Purchase_Frequency));
+        const averageBrowsingFrequency = d3.mean(bothFilteredData, d => browsingFrequencyOrdinal(d.Browsing_Frequency));
+        const averageCartCompletionFrequency = d3.mean(bothFilteredData, d => cartCompletionFrequency(d.Cart_Completion_Frequency));
+        const averagePersonalizedRecFrequency = d3.mean(bothFilteredData, d=> d["Personalized_Recommendation_Frequency "]);
+        const averageShoppingSatisfaction = d3.mean(bothFilteredData, d=> d.Shopping_Satisfaction);
+    
+        var allCoordinates = bothFilteredData.map((dataPoint, index) =>{
+            const dataValues = [
+              averagePurchaseFrequency,
+              averageBrowsingFrequency,
+              averageCartCompletionFrequency,
+              averagePersonalizedRecFrequency,
+              averageShoppingSatisfaction
+            ];
+            
+            return dataValues.map((value, i) => {
+                const angle = i * angleSlice - 90 * (Math.PI / 180);
+                const distance = radiusScale(value);
+                return {
+                  x: Math.cos(angle) * distance,
+                  y: Math.sin(angle) * distance
+                };
+            });
+        });
+    }
+
+    else{
+        const averagePurchaseFrequency = d3.mean(dataset, d => purchaseFrequencyOrdinal(d.Purchase_Frequency));
+        const averageBrowsingFrequency = d3.mean(dataset, d => browsingFrequencyOrdinal(d.Browsing_Frequency));
+        const averageCartCompletionFrequency = d3.mean(dataset, d => cartCompletionFrequency(d.Cart_Completion_Frequency));
+        const averagePersonalizedRecFrequency = d3.mean(dataset, d=> d["Personalized_Recommendation_Frequency "]);
+        const averageShoppingSatisfaction = d3.mean(dataset, d=> d.Shopping_Satisfaction);
+
+
+        var allCoordinates = dataset.map((dataPoint, index) =>{
+            const dataValues = [
+            averagePurchaseFrequency,
+            averageBrowsingFrequency,
+            averageCartCompletionFrequency,
+            averagePersonalizedRecFrequency,
+            averageShoppingSatisfaction
+            ];
+            
+            return dataValues.map((value, i) => {
+                const angle = i * angleSlice - 90 * (Math.PI / 180);
+                const distance = radiusScale(value);
+                return {
+                x: Math.cos(angle) * distance,
+                y: Math.sin(angle) * distance
+                };
+            });
+        });
+    }   
 
     radarChart.selectAll(".data-point")
         .data(allCoordinates[0])
@@ -132,11 +310,16 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .attr("class", "data-point")
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
-        .attr("r", 5) // Adjust the radius based on your preference
-        .attr("fill", "red"); // Adjust the color based on your preference
+        .attr("r", 5) 
+        .attr("fill", "Purple"); 
 
     radarChart.append("polygon")
         .data([allCoordinates[0]])
         .attr("points", d => d.map(point => `${point.x},${point.y}`).join(" "))
-        .attr("fill", "rgba(0, 0, 255, 0.3)");
+        .attr("fill", color)
+        .attr("opacity", 0.4);
+
+  
 });
+}
+createRadarChart();
