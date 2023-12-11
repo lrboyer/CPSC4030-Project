@@ -28,13 +28,16 @@ h4 {
     flex-direction: row;
     margin: auto;
     justify-content: center;
+    justify-content: space-around;
     gap: 50px;
 }
 
 #pie-chart-age-container,
 #pie-chart-gender-container {
+    flex-direction: column;
     justify-content: center;
     text-align: center;
+    overflow: visible;
 }
 
 #pie-chart-age,
