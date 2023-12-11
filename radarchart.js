@@ -1,9 +1,10 @@
 //Made by Trevor Rizzo
 //Radar chart showing Purchase Frequency, Browsing Frequency, Cart Completion, Personalized Recommendation Use, and Shopping Satisfaction.
 
-function createRadarChart(gender, ageGroup){
-d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
+function createRadarChart(gender, ageGroup){
+    
+d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     var dimensions = {
         width: 600,
         height: 400,
@@ -13,6 +14,12 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             right: 20,
             left: 60
         }
+    }
+
+    var visualDiv = d3.select("#visual2");
+    var existingSvg = visualDiv.select("svg");
+    if (!existingSvg.empty()) {
+        existingSvg.remove();
     }
 
     var svg = d3.select("#visual2")
@@ -111,13 +118,13 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             color = 'Blue';
         }
         else if(gender == "Female"){
-            color = 'Pink';
+            color = 'Magenta';
         }
         else if(gender == "Others"){
             color = 'Gray';
         }
         else{ 
-            color = 'White';
+            color = 'Black';
         }
 
         const averagePurchaseFrequency = d3.mean(genderFilteredData, d => purchaseFrequencyOrdinal(d.Purchase_Frequency));
@@ -209,13 +216,13 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             color = 'Blue';
         }
         else if(gender == "Female"){
-            color = 'Pink';
+            color = 'Magenta';
         }
         else if(gender == "Others"){
-            color = 'Gray';
+            color = 'Green';
         }
         else{ 
-            color = 'White';
+            color = 'Black';
         }
 
         var minAge;
@@ -306,24 +313,27 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         });
     }   
     
-        radarChart.selectAll(".data-point")
-            .data(allCoordinates[0])
-            .enter().append("circle")
-            .attr("class", "data-point")
-            .attr("cx", d => d.x)
-            .attr("cy", d => d.y)
-            .attr("r", 5)
-            .attr("fill", "Purple");
+    radarChart.selectAll(".data-point").remove();
 
-        
-        radarChart.append("polygon")
-            .data([allCoordinates[0]])
-            .attr("points", d => d.map(point => `${point.x},${point.y}`).join(" "))
-            .attr("fill", color)
-            .attr("opacity", 0.4);
+    // Select and remove existing polygon
+    radarChart.select("polygon").remove();
+   
+    radarChart.selectAll(".data-point")
+        .data(allCoordinates[0])
+        .enter().append("circle")
+        .attr("class", "data-point")
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+        .attr("r", 5)
+        .attr("fill", "Purple");
 
+
+    radarChart.append("polygon")
+        .data([allCoordinates[0]])
+        .attr("points", d => d.map(point => `${point.x},${point.y}`).join(" "))
+        .attr("fill", color)
+        .attr("opacity", 0.4);
   
 });
 }
-createRadarChart("Others");
-createRadarChart("Male");
+createRadarChart();
