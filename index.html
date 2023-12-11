@@ -5,27 +5,23 @@
     <meta charset="UTF-8" />
     <title>4030 Project G7</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <script src="https://d3js.org/d3.v7.js"></script>
+
+    <script src="stackedBar.js"></script>
+    <script src="radarchart.js"></script>
+    <script src="pieCharts.js"></script>
 </head>
 
 <body>
-    <script src="satisfaction_x_gender.js"></script>
-    <script src="satisfactionBar.js"></script>
-    <script src="visual4.js"></script>
-    <script src="visual5.js"></script>
-    <script src="stackedBar.js"></script>
-    <script src = "radarchart.js"></script>
-    <script src="pieCharts.js"></script>
+    <div class="dashboard">
+        <div class="stackedBar">
+            <h4>Purchase Frequency by Age and Gender of Amazon Customers</h4>
+            <div id="stackedBar"></div>
+        </div>
 
-    <div class="centered">
-        <div id="stackedBar"></div>
-    </div>
-
-
-    <div class="centered">
-        <div class="visuals">
-            <div class="visual">
-                <svg id="satisfactionBar"></svg>
+        <div>
+            <div>
                 <svg id="visual2"></svg>
             </div>
 
@@ -46,9 +42,8 @@
                         </p>
                     </div>
                 </div>
-
-            </div>
         </div>
+    </div>
 </body>
 
 </html>
