@@ -2,7 +2,6 @@
 //Radar chart showing Purchase Frequency, Browsing Frequency, Cart Completion, Personalized Recommendation Use, and Shopping Satisfaction.
 
 function createRadarChart(gender, ageGroup){
-
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
     var dimensions = {
@@ -30,9 +29,11 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     //Calculating radius scale
     let radiusScale = d3.scaleLinear().domain([0, 5]).range([0, dimensions.height / 2]);
     
+    
     // Create group for the radar chart
     const radarChart = svg.append("g")
         .attr("transform", `translate(${dimensions.width / 2}, ${dimensions.height / 2})`);
+    
 
     const reducedScale = 0.8;
     const titleMargin = 35;
@@ -293,6 +294,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             averageShoppingSatisfaction
             ];
             
+            
             return dataValues.map((value, i) => {
                 const angle = i * angleSlice - 90 * (Math.PI / 180);
                 const distance = radiusScale(value);
@@ -303,23 +305,25 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             });
         });
     }   
+    
+        radarChart.selectAll(".data-point")
+            .data(allCoordinates[0])
+            .enter().append("circle")
+            .attr("class", "data-point")
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+            .attr("r", 5)
+            .attr("fill", "Purple");
 
-    radarChart.selectAll(".data-point")
-        .data(allCoordinates[0])
-        .enter().append("circle")
-        .attr("class", "data-point")
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y)
-        .attr("r", 5) 
-        .attr("fill", "Purple"); 
-
-    radarChart.append("polygon")
-        .data([allCoordinates[0]])
-        .attr("points", d => d.map(point => `${point.x},${point.y}`).join(" "))
-        .attr("fill", color)
-        .attr("opacity", 0.4);
+        
+        radarChart.append("polygon")
+            .data([allCoordinates[0]])
+            .attr("points", d => d.map(point => `${point.x},${point.y}`).join(" "))
+            .attr("fill", color)
+            .attr("opacity", 0.4);
 
   
 });
 }
-createRadarChart();
+createRadarChart("Others");
+createRadarChart("Male");
