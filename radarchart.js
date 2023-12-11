@@ -1,10 +1,10 @@
 //Made by Trevor Rizzo
 //Radar chart showing Purchase Frequency, Browsing Frequency, Cart Completion, Personalized Recommendation Use, and Shopping Satisfaction.
 
+
 function createRadarChart(gender, ageGroup){
-
+    
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
-
     var dimensions = {
         width: 600,
         height: 400,
@@ -14,6 +14,12 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             right: 20,
             left: 60
         }
+    }
+
+    var visualDiv = d3.select("#visual2");
+    var existingSvg = visualDiv.select("svg");
+    if (!existingSvg.empty()) {
+        existingSvg.remove();
     }
 
     var svg = d3.select("#visual2")
@@ -30,9 +36,11 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     //Calculating radius scale
     let radiusScale = d3.scaleLinear().domain([0, 5]).range([0, dimensions.height / 2]);
     
+    
     // Create group for the radar chart
     const radarChart = svg.append("g")
         .attr("transform", `translate(${dimensions.width / 2}, ${dimensions.height / 2})`);
+    
 
     const reducedScale = 0.8;
     const titleMargin = 35;
@@ -110,13 +118,13 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             color = 'Blue';
         }
         else if(gender == "Female"){
-            color = 'Pink';
+            color = 'Magenta';
         }
         else if(gender == "Others"){
             color = 'Gray';
         }
         else{ 
-            color = 'White';
+            color = 'Black';
         }
 
         const averagePurchaseFrequency = d3.mean(genderFilteredData, d => purchaseFrequencyOrdinal(d.Purchase_Frequency));
@@ -149,7 +157,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         var maxAge;
         if(ageGroup == 1)
         {
-            minAge = 10;
+            minAge = 0;
             maxAge = 20;
         }
         else if(ageGroup == 2)
@@ -170,7 +178,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         else if(ageGroup == 5)
         {
             minAge = 51;
-            maxAge = 60;
+            maxAge = 65;
         }
         const ageFilteredData = dataset.filter(d =>{
             const age = +d.age;
@@ -208,20 +216,20 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             color = 'Blue';
         }
         else if(gender == "Female"){
-            color = 'Pink';
+            color = 'Magenta';
         }
         else if(gender == "Others"){
-            color = 'Gray';
+            color = 'Green';
         }
         else{ 
-            color = 'White';
+            color = 'Black';
         }
 
         var minAge;
         var maxAge;
         if(ageGroup == 1)
         {
-            minAge = 10;
+            minAge = 0;
             maxAge = 20;
         }
         else if(ageGroup == 2)
@@ -242,7 +250,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         else if(ageGroup == 5)
         {
             minAge = 51;
-            maxAge = 60;
+            maxAge = 65;
         }
         const genderFilteredData = dataset.filter(d => d.Gender === gender);
         const bothFilteredData = genderFilteredData.filter(d =>{
@@ -293,6 +301,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             averageShoppingSatisfaction
             ];
             
+            
             return dataValues.map((value, i) => {
                 const angle = i * angleSlice - 90 * (Math.PI / 180);
                 const distance = radiusScale(value);
@@ -303,22 +312,27 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             });
         });
     }   
+    
+    radarChart.selectAll(".data-point").remove();
 
+    // Select and remove existing polygon
+    radarChart.select("polygon").remove();
+   
     radarChart.selectAll(".data-point")
         .data(allCoordinates[0])
         .enter().append("circle")
         .attr("class", "data-point")
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
-        .attr("r", 5) 
-        .attr("fill", "Purple"); 
+        .attr("r", 5)
+        .attr("fill", "Purple");
+
 
     radarChart.append("polygon")
         .data([allCoordinates[0]])
         .attr("points", d => d.map(point => `${point.x},${point.y}`).join(" "))
         .attr("fill", color)
         .attr("opacity", 0.4);
-
   
 });
 }
