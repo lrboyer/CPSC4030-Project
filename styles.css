@@ -61,24 +61,15 @@ body, html {
     gap: 50px;
 }
 
-#pie-chart-women-container,
-#pie-chart-men-container {
+#pie-chart-age-container,
+#pie-chart-gender-container {
     justify-content: center;
     text-align: center;
 }
 
-#pie-chart-women,
-#pie-chart-men {
+#pie-chart-age,
+#pie-chart-gender {
     max-width: 100%;
     overflow: visible;
-}
-
-.tooltip {
-    position: absolute;
-    background-color: white;
-    border: 1px solid #ddd;
-    padding: 10px;
-    font-size: 12px;
-    pointer-events: none;
 }
 

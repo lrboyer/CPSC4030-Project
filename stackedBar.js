@@ -1,9 +1,9 @@
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
     const dimensions = {
-        width: 600,
-        height: 500,
-        margin: { top: 20, right: 60, bottom: 60, left: 60 },
+        width: 200,
+        height: 250,
+        margin: { top: 20, right: 0, bottom: 20, left: 20 },
         barPadding: 0.2
     };
 
@@ -12,7 +12,13 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     // Extract unique age groups, genders, and purchase frequencies
     const ageGroups = Array.from(new Set(dataset.map(d => d['Age Group'])));
     const genders = Array.from(new Set(dataset.map(d => d.Gender)));
-    const purchaseFrequencies = Array.from(new Set(dataset.map(d => d['Purchase Frequency'])));
+    const purchaseFrequencies = Array.from(new Set(dataset.map(d => d['Purchase_Frequency'])));
+
+    const desiredOrder = ['Less than once a month', 'Once a month', 'Few times a month', 'Once a week', 'Multiple times a week'];
+
+    // Sort purchaseFrequencies based on the desired order
+    purchaseFrequencies.sort((a, b) => desiredOrder.indexOf(a) - desiredOrder.indexOf(b));
+
 
     // Sort the age groups (you can customize the sort order as needed)
     ageGroups.sort((a, b) => {
@@ -26,8 +32,31 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .domain(genders)
         .range(d3.schemeCategory10);
 
+    const maxCombined = ageGroups.map(age => {
+        return d3.max(purchaseFrequencies, frequency => {
+            return d3.sum(genders, gender => {
+                return d3.sum(dataset, d =>
+                    (d['Age Group'] === age && d.Gender === gender && d['Purchase_Frequency'] === frequency) ? 1 : 0
+                );
+            });
+        });
+    });
+
+    // Find the overall maximum count from the array
+    const overallMax = d3.max(maxCombined);
+
+    // Create yScale
+    const yScale = d3.scaleLinear()
+        .domain([0, overallMax])
+        .range([dimensions.height, 0]);
+
+    const xScale = d3.scaleBand()
+        .domain(ageGroups)
+        .range([0, dimensions.width])
+        .padding(0.1);
+
     // Create a new SVG for each purchase frequency
-    purchaseFrequencies.forEach(frequency => {
+    purchaseFrequencies.forEach((frequency, index) => {
         const svg = d3.select("#stackedBar").append("svg")
             .attr("width", dimensions.width + dimensions.margin.left + dimensions.margin.right)
             .attr("height", dimensions.height + dimensions.margin.top + dimensions.margin.bottom)
@@ -39,46 +68,51 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             const obj = { age: age };
             genders.forEach(gender => {
                 obj[gender] = d3.sum(dataset, d =>
-                    (d['Age Group'] === age && d.Gender === gender && d['Purchase Frequency'] === frequency) ? 1 : 0
+                    (d['Age Group'] === age && d.Gender === gender && d['Purchase_Frequency'] === frequency) ? 1 : 0
                 );
             });
             return obj;
         });
 
-        // Create scales
-        const xScale = d3.scaleBand()
-            .domain(ageGroups)
-            .range([0, dimensions.width])
-            .padding(0.1);
+        const stack = d3.stack().keys(genders);
 
-        const yScale = d3.scaleLinear()
-            .domain([0, d3.max(dataForStackedBar, d => d3.sum(Object.values(d)))])
-            .range([dimensions.height, 0]);
-
-        console.log(dataForStackedBar)
+        // Transform the data for stacking
+        const stackedData = stack(dataForStackedBar);
 
         // Draw the stacked bars
         svg.selectAll(".bar")
-            .data(dataForStackedBar)
+            .data(stackedData)
             .enter().append("g")
+            .style("fill", d => colorScale(d.key))
             .attr("class", "bar")
             .selectAll("rect")
-            .data(d => Object.keys(d).filter(key => key !== 'age'))
+            .data(d => d)
             .enter().append("rect")
-            .attr("x", d => xScale(d))
-            .attr("y", d => yScale(dataForStackedBar[d.age][d]))
-            .attr("height", d => dimensions.height - yScale(dataForStackedBar[d.age][d]))
+            .attr("x", d => xScale(d.data.age))
+            .attr("y", d => yScale(d[1]))
+            .attr("height", d => yScale(d[0]) - yScale(d[1]))
             .attr("width", xScale.bandwidth())
-            .style("fill", d => colorScale(d.split('-')[0]));
 
-        // Create x-axis
+        if (index === 0) {
+            svg.append("g")
+                .call(d3.axisLeft(yScale));
+        }
+
+        const yLines = svg.append("g").attr("class", "y-lines");
+
+        yLines.selectAll(".y-line")
+            .data(yScale.ticks())
+            .enter().append("line")
+            .attr("class", "y-line")
+            .attr("x1", 0)
+            .attr("x2", dimensions.width)
+            .attr("y1", d => yScale(d))
+            .attr("y2", d => yScale(d))
+            .attr("stroke", "#333333"); // Add a stroke color for visibility
+
         svg.append("g")
             .attr("transform", "translate(0," + dimensions.height + ")")
             .call(d3.axisBottom(xScale));
-
-        // Create y-axis
-        svg.append("g")
-            .call(d3.axisLeft(yScale));
 
         // Add a title or other information to distinguish between SVGs
         svg.append("text")
@@ -86,8 +120,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             .attr("y", -dimensions.margin.top / 2)
             .attr("text-anchor", "middle")
             .style("font-size", "14px")
-            .text(`Purchase Frequency: ${frequency}`);
+            .text(`${frequency}`);
     });
-
 
 });
