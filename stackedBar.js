@@ -1,5 +1,7 @@
-d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
+let xScale;
+let yScale;
 
+let createStackedBarChart = dataset => {
     const dimensions = {
         width: 250,
         height: 300,
@@ -38,11 +40,11 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     const overallMax = d3.max(maxCombined);
 
     //create the scales
-    const yScale = d3.scaleLinear()
+    yScale = d3.scaleLinear()
         .domain([0, overallMax])
         .range([dimensions.height, 0]);
 
-    const xScale = d3.scaleBand()
+    xScale = d3.scaleBand()
         .domain(ageGroups)
         .range([0, dimensions.width])
         .padding(0.1);
@@ -208,4 +210,108 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .style("text-anchor", "start")
         .text(d => d);
 
-});
+};
+
+let updateStackedBarChart = dataset => {
+
+    const ageGroups = Array.from(new Set(dataset.map(d => d['Age Group'])));
+    ageGroups.sort((a, b) => {
+        const ageA = parseInt(a.split('-')[0]);
+        const ageB = parseInt(b.split('-')[0]);
+        return ageA - ageB;
+    });
+
+    const genders = Array.from(new Set(dataset.map(d => d.Gender)));
+
+    const purchaseFrequencies = Array.from(new Set(dataset.map(d => d['Purchase_Frequency'])));
+    const desiredOrder = ['Less than once a month', 'Once a month', 'Few times a month', 'Once a week', 'Multiple times a week'];
+    purchaseFrequencies.sort((a, b) => desiredOrder.indexOf(a) - desiredOrder.indexOf(b));
+
+    const maxCombined = ageGroups.map(age => {
+        return d3.max(purchaseFrequencies, frequency => {
+            return d3.sum(genders, gender => {
+                return d3.sum(dataset, d =>
+                    (d['Age Group'] === age && d.Gender === gender && d['Purchase_Frequency'] === frequency) ? 1 : 0
+                );
+            });
+        });
+    });
+
+    const overallMax = d3.max(maxCombined);
+
+    xScale.domain(ageGroups);
+    yScale.domain([0, overallMax]);
+
+    const stack = d3.stack().keys(genders);
+
+    //Tooltip popup
+    let Tooltip = d3.select("#stackedBar")
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "2px")
+        .style("border-radius", "5px")
+        .style("padding", "5px");
+
+    let mouseover = function (d) {
+        Tooltip
+            .style("opacity", 1);
+        d3.select(this)
+            .style("stroke", "black")
+            .style("opacity", 1);
+    };
+
+    let mousemove = function (event, d) {
+        let PF = event.target.id.split("_")[2]
+        Tooltip
+            .html(`Purchase Frequency: ${PF}<br>Age Group: ${d.data.age}<br>Gender: ${d.key}<br>Count: ${d[1] - d[0]}`)
+            .style("position", "absolute")
+            .style("top", (event.pageY + 10) + "px")
+            .style("left", (event.pageX + 10) + "px");
+    };
+
+    let mouseleave = function (d) {
+        Tooltip
+            .style("opacity", 0);
+        d3.select(this)
+            .style("stroke", "none")
+            .style("opacity", 0.8);
+    };
+
+    // Select the SVG group containing the bars
+    const bars = d3.select("#stackedBar").selectAll(".bar")
+        .data(stack(dataset), d => d.key);
+
+    console.log(bars)
+
+    // Update existing bars
+    bars.selectAll("rect")
+        .data(d => d)
+        .transition()
+        .duration(500)
+        .attr("y", d => yScale(d[1]))
+        .attr("height", d => yScale(d[0]) - yScale(d[1]));
+
+    // Enter new bars
+    bars.enter().append("g")
+        .attr("class", "bar")
+        .style("fill", d => colorScale(d.key))
+        .selectAll("rect")
+        .data(d => d)
+        .enter().append("rect")
+        .attr("x", d => xScale(d.data.age))
+        .attr("y", d => yScale(d[1]))
+        .attr("height", d => yScale(d[0]) - yScale(d[1]))
+        .attr("width", xScale.bandwidth())
+        .attr("id", d => `${d.data.age}_${d.key}`)
+        .on("mouseover", mouseover)
+        .on("mousemove", mousemove)
+        .on("mouseleave", mouseleave);
+
+    // Exit old bars
+    bars.exit().remove();
+}
+
+window.createStackedBarChart = createStackedBarChart;
