@@ -27,7 +27,18 @@ async function createAndUpdate() {
             }
             else { // If not filtered, filter the dataset
                 //FILTER LOGIC WILLL EXPAND ON
-                filteredData = filteredData.filter(d => d.Gender === 'Female');
+
+                /* IF NEED BE HERE IS SOME TO INDIVIUALLY GET AGE AND GENDER
+                    const ageGroups = Array.from(new Set(dataset.map(d => d['Age Group'])));
+                    ageGroups.sort((a, b) => {
+                        const ageA = parseInt(a.split('-')[0]);
+                        const ageB = parseInt(b.split('-')[0]);
+                        return ageA - ageB;
+                    });
+
+                    const genders = Array.from(new Set(dataset.map(d => d.Gender)));
+                */
+                filteredData = filteredData.filter(d => d.Gender === 'Female' || d.Gender === 'Male');
                 filteredData = filteredData.filter(d => {
                     return d.age >= 21 && d.age <= 30;
                 });
@@ -36,7 +47,7 @@ async function createAndUpdate() {
             }
 
             //update all visuals
-            createStackedBarChart(filteredData);
+            updateStackedBarChart(filteredData);
         });
 
     } catch (error) {

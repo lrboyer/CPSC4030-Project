@@ -1,13 +1,19 @@
-let xScale;
-let yScale;
+
+const genderColorMapping = {
+    "Male": "Blue",
+    "Female": "Magenta",
+    "Other": "Red",
+    "Prefer not to say": "Black"
+};
+
+const dimensions = {
+    width: 250,
+    height: 300,
+    margin: { top: 20, right: 0, bottom: 40, left: 70 },
+    barPadding: 0.2
+};
 
 let createStackedBarChart = dataset => {
-    const dimensions = {
-        width: 250,
-        height: 300,
-        margin: { top: 20, right: 0, bottom: 40, left: 70 },
-        barPadding: 0.2
-    };
 
     const ageGroups = Array.from(new Set(dataset.map(d => d['Age Group'])));
     ageGroups.sort((a, b) => {
@@ -22,10 +28,9 @@ let createStackedBarChart = dataset => {
     const desiredOrder = ['Less than once a month', 'Once a month', 'Few times a month', 'Once a week', 'Multiple times a week'];
     purchaseFrequencies.sort((a, b) => desiredOrder.indexOf(a) - desiredOrder.indexOf(b));
 
-    let customColors = ["Magenta", "Black", "Blue", "Gray"];
-    const colorScale = d3.scaleOrdinal()
+    let colorScale = d3.scaleOrdinal()
         .domain(genders)
-        .range(customColors);
+        .range(genders.map(gender => genderColorMapping[gender]));
 
     //finds the overall max for the y axis
     const maxCombined = ageGroups.map(age => {
@@ -40,20 +45,57 @@ let createStackedBarChart = dataset => {
     const overallMax = d3.max(maxCombined);
 
     //create the scales
-    yScale = d3.scaleLinear()
+    let yScale = d3.scaleLinear()
         .domain([0, overallMax])
         .range([dimensions.height, 0]);
 
-    xScale = d3.scaleBand()
+    let xScale = d3.scaleBand()
         .domain(ageGroups)
         .range([0, dimensions.width])
         .padding(0.1);
+
+    //Tooltip popup
+    let Tooltip = d3.select("#stackedBar")
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "2px")
+        .style("border-radius", "5px")
+        .style("padding", "5px");
+
+    let mouseover = function (d) {
+        Tooltip
+            .style("opacity", 1);
+        d3.select(this)
+            .style("stroke", "black")
+            .style("opacity", 1);
+    };
+
+    let mousemove = function (event, d) {
+        let PF = event.target.id.split("_")[2]
+        Tooltip
+            .html(`Purchase Frequency: ${PF}<br>Age Group: ${d.data.age}<br>Gender: ${d.key}<br>Count: ${d[1] - d[0]}`)
+            .style("position", "absolute")
+            .style("top", (event.pageY + 10) + "px")
+            .style("left", (event.pageX + 10) + "px");
+    };
+
+    let mouseleave = function (d) {
+        Tooltip
+            .style("opacity", 0);
+        d3.select(this)
+            .style("stroke", "none")
+            .style("opacity", 0.8);
+    };
 
     // Create a new SVG for each purchase frequency
     purchaseFrequencies.forEach((frequency, index) => {
         let svg = null
         if (index == 0) { //margin is different on first 1 b/c added y axis labels
             svg = d3.select("#stackedBar").append("svg")
+                .attr("id", "bar-" + frequency)
                 .attr("width", dimensions.width + dimensions.margin.left + dimensions.margin.right)
                 .attr("height", dimensions.height + dimensions.margin.top + dimensions.margin.bottom)
                 .append("g")
@@ -61,6 +103,7 @@ let createStackedBarChart = dataset => {
         }
         else {
             svg = d3.select("#stackedBar").append("svg")
+                .attr("id", "bar-" + frequency)
                 .attr("width", dimensions.width + 10 + dimensions.margin.right)
                 .attr("height", dimensions.height + dimensions.margin.top + dimensions.margin.bottom)
                 .append("g")
@@ -79,42 +122,6 @@ let createStackedBarChart = dataset => {
 
         const stack = d3.stack().keys(genders);
         const stackedData = stack(dataForStackedBar);
-
-        //Tooltip popup
-        let Tooltip = d3.select("#stackedBar")
-            .append("div")
-            .style("opacity", 0)
-            .attr("class", "tooltip")
-            .style("background-color", "white")
-            .style("border", "solid")
-            .style("border-width", "2px")
-            .style("border-radius", "5px")
-            .style("padding", "5px");
-
-        let mouseover = function (d) {
-            Tooltip
-                .style("opacity", 1);
-            d3.select(this)
-                .style("stroke", "black")
-                .style("opacity", 1);
-        };
-
-        let mousemove = function (event, d) {
-            let PF = event.target.id.split("_")[2]
-            Tooltip
-                .html(`Purchase Frequency: ${PF}<br>Age Group: ${d.data.age}<br>Gender: ${d.key}<br>Count: ${d[1] - d[0]}`)
-                .style("position", "absolute")
-                .style("top", (event.pageY + 10) + "px")
-                .style("left", (event.pageX + 10) + "px");
-        };
-
-        let mouseleave = function (d) {
-            Tooltip
-                .style("opacity", 0);
-            d3.select(this)
-                .style("stroke", "none")
-                .style("opacity", 0.8);
-        };
 
         // Draw the stacked bars
         svg.selectAll(".bar")
@@ -136,7 +143,7 @@ let createStackedBarChart = dataset => {
 
         //y axis only on the first chart
         if (index === 0) {
-            svg.append("g")
+            Y_AXIS = svg.append("g")
                 .call(d3.axisLeft(yScale));
 
             svg.append("text")
@@ -209,109 +216,10 @@ let createStackedBarChart = dataset => {
         .attr("dy", ".35em")
         .style("text-anchor", "start")
         .text(d => d);
-
 };
 
 let updateStackedBarChart = dataset => {
-
-    const ageGroups = Array.from(new Set(dataset.map(d => d['Age Group'])));
-    ageGroups.sort((a, b) => {
-        const ageA = parseInt(a.split('-')[0]);
-        const ageB = parseInt(b.split('-')[0]);
-        return ageA - ageB;
-    });
-
-    const genders = Array.from(new Set(dataset.map(d => d.Gender)));
-
-    const purchaseFrequencies = Array.from(new Set(dataset.map(d => d['Purchase_Frequency'])));
-    const desiredOrder = ['Less than once a month', 'Once a month', 'Few times a month', 'Once a week', 'Multiple times a week'];
-    purchaseFrequencies.sort((a, b) => desiredOrder.indexOf(a) - desiredOrder.indexOf(b));
-
-    const maxCombined = ageGroups.map(age => {
-        return d3.max(purchaseFrequencies, frequency => {
-            return d3.sum(genders, gender => {
-                return d3.sum(dataset, d =>
-                    (d['Age Group'] === age && d.Gender === gender && d['Purchase_Frequency'] === frequency) ? 1 : 0
-                );
-            });
-        });
-    });
-
-    const overallMax = d3.max(maxCombined);
-
-    xScale.domain(ageGroups);
-    yScale.domain([0, overallMax]);
-
-    const stack = d3.stack().keys(genders);
-
-    //Tooltip popup
-    let Tooltip = d3.select("#stackedBar")
-        .append("div")
-        .style("opacity", 0)
-        .attr("class", "tooltip")
-        .style("background-color", "white")
-        .style("border", "solid")
-        .style("border-width", "2px")
-        .style("border-radius", "5px")
-        .style("padding", "5px");
-
-    let mouseover = function (d) {
-        Tooltip
-            .style("opacity", 1);
-        d3.select(this)
-            .style("stroke", "black")
-            .style("opacity", 1);
-    };
-
-    let mousemove = function (event, d) {
-        let PF = event.target.id.split("_")[2]
-        Tooltip
-            .html(`Purchase Frequency: ${PF}<br>Age Group: ${d.data.age}<br>Gender: ${d.key}<br>Count: ${d[1] - d[0]}`)
-            .style("position", "absolute")
-            .style("top", (event.pageY + 10) + "px")
-            .style("left", (event.pageX + 10) + "px");
-    };
-
-    let mouseleave = function (d) {
-        Tooltip
-            .style("opacity", 0);
-        d3.select(this)
-            .style("stroke", "none")
-            .style("opacity", 0.8);
-    };
-
-    // Select the SVG group containing the bars
-    const bars = d3.select("#stackedBar").selectAll(".bar")
-        .data(stack(dataset), d => d.key);
-
-    console.log(bars)
-
-    // Update existing bars
-    bars.selectAll("rect")
-        .data(d => d)
-        .transition()
-        .duration(500)
-        .attr("y", d => yScale(d[1]))
-        .attr("height", d => yScale(d[0]) - yScale(d[1]));
-
-    // Enter new bars
-    bars.enter().append("g")
-        .attr("class", "bar")
-        .style("fill", d => colorScale(d.key))
-        .selectAll("rect")
-        .data(d => d)
-        .enter().append("rect")
-        .attr("x", d => xScale(d.data.age))
-        .attr("y", d => yScale(d[1]))
-        .attr("height", d => yScale(d[0]) - yScale(d[1]))
-        .attr("width", xScale.bandwidth())
-        .attr("id", d => `${d.data.age}_${d.key}`)
-        .on("mouseover", mouseover)
-        .on("mousemove", mousemove)
-        .on("mouseleave", mouseleave);
-
-    // Exit old bars
-    bars.exit().remove();
+    const stackedBarDiv = document.getElementById("stackedBar");
+    stackedBarDiv.textContent = "";
+    createStackedBarChart(dataset)
 }
-
-window.createStackedBarChart = createStackedBarChart;
