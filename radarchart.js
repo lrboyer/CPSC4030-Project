@@ -157,7 +157,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         var maxAge;
         if(ageGroup == 1)
         {
-            minAge = 10;
+            minAge = 0;
             maxAge = 20;
         }
         else if(ageGroup == 2)
@@ -178,7 +178,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         else if(ageGroup == 5)
         {
             minAge = 51;
-            maxAge = 60;
+            maxAge = 65;
         }
         const ageFilteredData = dataset.filter(d =>{
             const age = +d.age;
@@ -229,7 +229,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         var maxAge;
         if(ageGroup == 1)
         {
-            minAge = 10;
+            minAge = 0;
             maxAge = 20;
         }
         else if(ageGroup == 2)
@@ -250,7 +250,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         else if(ageGroup == 5)
         {
             minAge = 51;
-            maxAge = 60;
+            maxAge = 65;
         }
         const genderFilteredData = dataset.filter(d => d.Gender === gender);
         const bothFilteredData = genderFilteredData.filter(d =>{
