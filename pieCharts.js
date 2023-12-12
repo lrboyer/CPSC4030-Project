@@ -3,6 +3,8 @@ let selectedData = {
     "Gender": null,
     "Age Group": null
 };
+let initialDataset
+let filteredData;
 
 // Define the dimensions and radius of the pie chart.
 const width = 200;
@@ -28,7 +30,7 @@ const ageColors = {
     "31-40": "#a9dfbf",
     "41-50": "#77c4a7",
     "51-65": "#4d9f83", // Darkest pastel green
-    
+
 };
 
 
@@ -47,7 +49,7 @@ function drawPieChart(data, containerId, columnName, legendLabels) {
             .range(legendLabels.map(label => ageColors[label]));
     }
     legendLabels.sort((a, b) => Object.keys(ageColors).indexOf(a) - Object.keys(ageColors).indexOf(b));
-    
+
 
 
     const svg = d3.select(`#${containerId}`)
@@ -100,7 +102,7 @@ function drawPieChart(data, containerId, columnName, legendLabels) {
                     .attr("d", d => arc.innerRadius(0).outerRadius(radius)(d))
                     .style("stroke", "none");
             }
-            
+
         })
         .on("click", function (d, event) {
             // Handle click event (update global filter variable).
@@ -121,17 +123,9 @@ function drawPieChart(data, containerId, columnName, legendLabels) {
 
                 // Select the new slice
                 selectedData[columnName] = event.data[0];
-                createRadarChart(selectedData["Gender"], selectedData["Age Group"]);
             }
-
-            // Update the chart based on the selected data
-            //updateCharts();
-
-            // Log the selected data (you can replace this with your own logic)
-            /*console.log(`Selected ${event}`);
-            console.log(event);
-            console.log(event.data);
-            console.log(event.data[0]);*/
+            createRadarChart(selectedData["Gender"], selectedData["Age Group"]);
+            updateFilter()
         });
 
     // Add a legend.
@@ -139,7 +133,7 @@ function drawPieChart(data, containerId, columnName, legendLabels) {
         .data(legendLabels)
         .enter().append("g")
         .attr("class", "legend")
-        .attr("transform", (d, i) => `translate(-${width*1.6},${i * 20 - height/5})`);
+        .attr("transform", (d, i) => `translate(-${width * 1.6},${i * 20 - height / 5})`);
 
     legend.append("rect")
         .attr("x", width - 18)
@@ -159,13 +153,43 @@ function drawPieChart(data, containerId, columnName, legendLabels) {
 // Load the CSV data and draw the pie charts.
 d3.csv("Amazon_Customer_Behavior_Survey.csv").then(data => {
     // Draw Pie Chart for Gender
-    drawPieChart(data, "pie-chart-gender", "Gender", genderLegendLabels);
+    initialDataset = data
+    filteredData = initialDataset;
+    drawPieChart(initialDataset, "pie-chart-gender", "Gender", genderLegendLabels);
 
     // Dynamically extract unique values from the "Age Group" column
     //const uniqueAgeGroups = [...new Set(data.map(d => d["Age Group"]))];
-    
+
     // Draw Pie Chart for Age with dynamic legend labels
-    drawPieChart(data, "pie-chart-age", "Age Group", uniqueAgeGroups);
+    drawPieChart(initialDataset, "pie-chart-age", "Age Group", uniqueAgeGroups);
+    createStackedBarChart(initialDataset)
 });
 
+let updateFilter = () => {
+    if (!selectedData["Gender"] && !selectedData["Age Group"]) {
+        filteredData = initialDataset;
+    } else {
+        filteredData = initialDataset;
 
+        if (selectedData["Gender"]) {
+            filteredData = filteredData.filter(d => d.Gender === selectedData["Gender"]);
+        }
+
+        if (selectedData["Age Group"]) {
+            const ageGroups = [
+                [0, 20],
+                [21, 30],
+                [31, 40],
+                [41, 50],
+                [51, 65]
+            ];
+
+            const selectedAgeGroup = ageGroups.find(group => group.join('-') === selectedData["Age Group"]);
+
+            if (selectedAgeGroup) {
+                filteredData = filteredData.filter(d => d.age >= selectedAgeGroup[0] && d.age <= selectedAgeGroup[1]);
+            }
+        }
+    }
+    updateStackedBarChart(filteredData);
+}

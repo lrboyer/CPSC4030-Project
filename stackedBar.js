@@ -2,7 +2,7 @@
 const genderColorMapping = {
     "Male": "Blue",
     "Female": "Magenta",
-    "Other": "Red",
+    "Others": "Red",
     "Prefer not to say": "Black"
 };
 
@@ -219,6 +219,7 @@ let createStackedBarChart = dataset => {
 };
 
 let updateStackedBarChart = dataset => {
+    //console.log(selectedData)
     const stackedBarDiv = document.getElementById("stackedBar");
     stackedBarDiv.textContent = "";
     createStackedBarChart(dataset)
