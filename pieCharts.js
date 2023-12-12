@@ -121,7 +121,7 @@ function drawPieChart(data, containerId, columnName, legendLabels) {
 
                 // Select the new slice
                 selectedData[columnName] = event.data[0];
-                createRadarChart(selectedData["Gender"], selectedData["Age Group"]);
+                
             }
 
             // Update the chart based on the selected data
@@ -132,6 +132,7 @@ function drawPieChart(data, containerId, columnName, legendLabels) {
             console.log(event);
             console.log(event.data);
             console.log(event.data[0]);*/
+            createRadarChart(selectedData["Gender"], selectedData["Age Group"]);
         });
 
     // Add a legend.
