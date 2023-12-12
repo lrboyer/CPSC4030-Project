@@ -121,7 +121,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             color = 'Magenta';
         }
         else if(gender == "Others"){
-            color = 'Gray';
+            color = 'Red';
         }
         else{ 
             color = 'Black';
@@ -155,30 +155,35 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     else if(ageGroup && !gender){
         var minAge;
         var maxAge;
-        if(ageGroup == 1)
+        if(ageGroup == '0-20')
         {
             minAge = 0;
             maxAge = 20;
+            color = "#f0fff0";
         }
-        else if(ageGroup == 2)
+        else if(ageGroup == '21-30')
         {
             minAge = 21;
             maxAge = 30;
+            color = "#d9ead3";
         }
-        else if(ageGroup == 3)
+        else if(ageGroup == '31-40')
         {
             minAge = 31;
             maxAge = 40;
+            color = "#a9dfbf";
         }
-        else if(ageGroup == 4)
+        else if(ageGroup == '41-50')
         {
             minAge = 41;
             maxAge = 50;
+            color = "#77c4a7";
         }
-        else if(ageGroup == 5)
+        else if(ageGroup == '51-65')
         {
             minAge = 51;
             maxAge = 65;
+            color = "#4d9f83";
         }
         const ageFilteredData = dataset.filter(d =>{
             const age = +d.age;
@@ -219,7 +224,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
             color = 'Magenta';
         }
         else if(gender == "Others"){
-            color = 'Green';
+            color = 'Red';
         }
         else{ 
             color = 'Black';
@@ -227,27 +232,27 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
 
         var minAge;
         var maxAge;
-        if(ageGroup == 1)
+        if(ageGroup == '0-20')
         {
             minAge = 0;
             maxAge = 20;
         }
-        else if(ageGroup == 2)
+        else if(ageGroup == '21-30')
         {
             minAge = 21;
             maxAge = 30;
         }
-        else if(ageGroup == 3)
+        else if(ageGroup == '31-40')
         {
             minAge = 31;
             maxAge = 40;
         }
-        else if(ageGroup == 4)
+        else if(ageGroup == '41-50')
         {
             minAge = 41;
             maxAge = 50;
         }
-        else if(ageGroup == 5)
+        else if(ageGroup == '51-65')
         {
             minAge = 51;
             maxAge = 65;
@@ -332,8 +337,11 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         .data([allCoordinates[0]])
         .attr("points", d => d.map(point => `${point.x},${point.y}`).join(" "))
         .attr("fill", color)
-        .attr("opacity", 0.4);
+        .style("stroke", "black")
+        .style("stroke-width", 1)
+        .attr("opacity", 0.6);
   
 });
 }
+
 createRadarChart();

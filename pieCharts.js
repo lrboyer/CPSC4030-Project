@@ -17,7 +17,7 @@ const uniqueAgeGroups = ["0-20", "21-30", "31-40", "41-50", "51-65"];
 const genderColors = {
     "Male": "blue",
     "Female": "magenta",
-    "Others": "gray",
+    "Others": "red",
     "Prefer not to say": "black"
 };
 
@@ -121,6 +121,7 @@ function drawPieChart(data, containerId, columnName, legendLabels) {
 
                 // Select the new slice
                 selectedData[columnName] = event.data[0];
+                createRadarChart(selectedData["Gender"], selectedData["Age Group"]);
             }
 
             // Update the chart based on the selected data
