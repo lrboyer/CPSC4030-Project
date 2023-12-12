@@ -113,7 +113,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     var color = 'Orange';    
     if(gender && !ageGroup){
         const genderFilteredData = dataset.filter(d => d.Gender === gender);
-        
+        color = 'Orange';
         if(gender == "Male"){
             color = 'Blue';
         }
@@ -155,6 +155,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     else if(ageGroup && !gender){
         var minAge;
         var maxAge;
+        color = 'Orange';
         if(ageGroup == '0-20')
         {
             minAge = 0;
@@ -216,7 +217,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
         });
     }
     else if(gender && ageGroup){
-
+        color = 'Orange';
         if(gender == "Male"){
             color = 'Blue';
         }
@@ -290,6 +291,7 @@ d3.csv("Amazon_Customer_Behavior_Survey.csv").then((dataset) => {
     }
 
     else{
+        color = "Orange";
         const averagePurchaseFrequency = d3.mean(dataset, d => purchaseFrequencyOrdinal(d.Purchase_Frequency));
         const averageBrowsingFrequency = d3.mean(dataset, d => browsingFrequencyOrdinal(d.Browsing_Frequency));
         const averageCartCompletionFrequency = d3.mean(dataset, d => cartCompletionFrequency(d.Cart_Completion_Frequency));
