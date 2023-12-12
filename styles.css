@@ -4,6 +4,7 @@ body, html {
     padding: 0;
     height: 100%;
     width: 100%;
+    background-color: hsl(39, 100%, 81%);
 }
 
 h4 {
@@ -44,5 +45,22 @@ h4 {
 #pie-chart-gender {
     max-width: 100%;
     overflow: visible;
+}
+
+#pie-chart-gender-container {
+    margin-left: 11%;
+}
+
+
+#secondRowOfStuff {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.row2Thing {
+    margin-left: 5%;
+    margin-right: 5%;
+    /*border: 1px solid #ccc;*/
 }
 
